@@ -1,8 +1,8 @@
 import React from 'react';
 import { HomeIcon } from '@heroicons/react/24/outline';
-function HomeButton() {
+const HomeButton = () => {
   return (
-    <span className="ml-3 hidden sm:block">
+    <span>
       <button
         type="button"
         className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"

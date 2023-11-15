@@ -1,43 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AddButton from "../components/AddButton";
-import HomeButton from "../components/HomeButton";
+import SearchButton from "../components/SearchButton";
 import NoteList from "../components/NoteList";
+import { getNotes, deleteNote } from "../utils/data";
 
 const Home = () => {
-  const posts = [
-    {
-      id: 1,
-      title: 'Perkembangan Profesional',
-      description:
-        'Hari ini, saya meninjau kemajuan proyek penelitian terkini. Saat ini tim saya berhasil mengatasi sebagian besar tantangan teknis yang terjadi. Saya mencatat beberapa ide kreatif yang muncul selama rapat tim, terutama terkait implementasi teknologi baru yang dapat mempercepat proses analisis data. ',
-      createdAt: new Date(),
-      category: { title: 'Personal' }
-    },
-    {
-      id: 1,
-      title: 'Perkembangan Profesional',
-      description:
-        'Hari ini, saya meninjau kemajuan proyek penelitian terkini. Saat ini tim saya berhasil mengatasi sebagian besar tantangan teknis yang terjadi. Saya mencatat beberapa ide kreatif yang muncul selama rapat tim, terutama terkait implementasi teknologi baru yang dapat mempercepat proses analisis data. ',
-      createdAt: new Date(),
-      category: { title: 'Personal' }
-    },
-    {
-      id: 1,
-      title: 'Perkembangan Profesional',
-      description:
-        'Hari ini, saya meninjau kemajuan proyek penelitian terkini. Saat ini tim saya berhasil mengatasi sebagian besar tantangan teknis yang terjadi. Saya mencatat beberapa ide kreatif yang muncul selama rapat tim, terutama terkait implementasi teknologi baru yang dapat mempercepat proses analisis data. ',
-      createdAt: new Date(),
-      category: { title: 'Personal' }
-    },
-    {
-      id: 1,
-      title: 'Perkembangan Profesional',
-      description:
-        'Hari ini, saya meninjau kemajuan proyek penelitian terkini. Saat ini tim saya berhasil mengatasi sebagian besar tantangan teknis yang terjadi. Saya mencatat beberapa ide kreatif yang muncul selama rapat tim, terutama terkait implementasi teknologi baru yang dapat mempercepat proses analisis data. ',
-      createdAt: new Date(),
-      category: { title: 'Personal' }
-    },
-  ];
+  const [notes, setNotes] = useState([]);
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const data = await getNotes();
+      setNotes(data);
+    };
+    fetchNotes();
+  }, [keyword]);
+
+  const handleSearch = (keyword) => {
+    setKeyword(keyword);
+  };
+
+  const filteredNotes = notes.filter((note) => {
+    const title = note.title.toLowerCase();
+    const searchKeyword = keyword.toLowerCase();
+    return title.includes(searchKeyword);
+  });
+
+  const onDeleteHandler = (id) => {
+    deleteNote(id);
+    setNotes(getNotes());
+  };
 
   return (
     <div className="bg-white py-24 sm:py-20">
@@ -51,13 +44,20 @@ const Home = () => {
               Dirancang untuk memudahkan pengguna dalam mencatat dan menyimpan informasi penting, ide-ide kreatif, daftar tugas, atau catatan pribadi dengan mudah.
             </p>
           </div>
-          <div className="flex justify-between">
-            <AddButton />
-            <HomeButton />
+        </div>
+        <div className="flex justify-between items-center mt-5">
+          <div>
+            <SearchButton handleSearch={handleSearch} />
+          </div>
+          <div>
+            <Link to="/add">
+              <AddButton />
+            </Link>
           </div>
         </div>
-        <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-300 pt-10 sm:mt-10 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          <NoteList posts={posts} />
+        <div className="mx-auto mt-10 border-t border-gray-300 pt-10 sm:mt-10 sm:pt-16">
+          <NoteList notes={filteredNotes}
+            onDelete={onDeleteHandler} />
         </div>
       </div>
     </div>
