@@ -3,19 +3,27 @@ import { Link } from "react-router-dom";
 import AddButton from "../components/AddButton";
 import SearchButton from "../components/SearchButton";
 import NoteList from "../components/NoteList";
-import { getNotes, deleteNote } from "../utils/data";
+import { getNotes, deleteNote } from "../utils/network";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      const data = await getNotes();
+const fetchData = async () => {
+  try {
+    const { error, data } = await getNotes();
+    if (error) {
+      setNotes([]);
+    } else {
       setNotes(data);
-    };
-    fetchNotes();
-  }, [keyword]);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+    fetchData();
+  }, []);
 
   const handleSearch = (keyword) => {
     setKeyword(keyword);
@@ -64,4 +72,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export { Home };
