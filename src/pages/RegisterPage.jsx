@@ -1,69 +1,81 @@
-import React, { useState } from 'react';
-import { register } from '../utils/network'; // Update the path as per your file structure
+import React, { useState } from "react";
+import { register } from "../utils/network";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
+    const onUsernameChangeHandler = (event) => {
+        setUsername(event.target.value);
+    };
+
+    const onPasswordChangeHandler = (event) => {
+        setPassword(event.target.value);
+    };
+
+    const onSubmitHandler = async (event) => {
+        event.preventDefault();
+
         try {
-            const response = await register({ user: username, password });
-            if (!response.error) {
-                console.log('Registration successful!');
+            const { error } = await register({ username, password });
+            if (error) {
+                setErrorMessage("Registration failed. Please try again.");
             } else {
-                console.error('Registration failed:', response.code);
+                console.log("Registration successful!");
+                navigate("/")
             }
         } catch (error) {
-            console.error('Registration error:', error);
+            setErrorMessage("An unexpected error occurred.");
         }
     };
 
     return (
-        <div className="flex min-h-full flex-1 flex-col justify-center center px-6 py-12 lg:px-8">
+        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Register for an account
+            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                    Register Account
                 </h2>
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" onSubmit={handleRegister}>
+                <form className="space-y-6" onSubmit={onSubmitHandler}>
                     <div>
-                        <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-                            Username
-                        </label>
+                        <div className="flex items-center justify-between">
+                            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                                Username
+                            </label>
+                        </div>
                         <div className="mt-2">
                             <input
-                                id="username"
-                                name="username"
-                                autoComplete="username"
+                                type="text"
                                 required
                                 value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                onChange={onUsernameChangeHandler}
                                 className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
-
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                            Password
-                        </label>
+                        <div className="flex items-center justify-between">
+                            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                                Password
+                            </label>
+                        </div>
+
                         <div className="mt-2">
                             <input
-                                id="password"
-                                name="password"
                                 type="password"
-                                autoComplete="new-password"
-                                required
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={onPasswordChangeHandler}
+                                required
                                 className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
                     </div>
-
+                    {errorMessage && <p className="text-red-600">{errorMessage}</p>}
                     <div>
                         <button
                             type="submit"
@@ -76,9 +88,9 @@ const RegisterPage = () => {
 
                 <p className="mt-10 text-center text-sm text-gray-500">
                     Already have an account?{' '}
-                    <a href="login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Login here
-                    </a>
+                    <Link to="/">
+                    <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-700"> Sing In </span>
+                    </Link>
                 </p>
             </div>
         </div>
